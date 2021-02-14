@@ -1,0 +1,51 @@
+---
+- name: build app
+  hosts: build
+  become: yes
+
+  tasks:
+  - name: ensure default-jdk package is peresent
+    apt:
+      name: default-jdk
+      state: present
+
+  - name: ensure maven package is present
+    apt:
+      name: maven
+      state: present
+
+  - name: clone app from GitHub
+    git:
+      repo: https://github.com/boxfuse/boxfuse-sample-java-war-hello.git
+      dest: /home/
+
+  - name: build app
+    shell: mvn package
+    args:
+      chdir: /home/boxfuse-sample-java-war-hello/
+
+  - name: fetch .war file
+    fetch:
+      src: /home/boxfuse-sample-java-war-hello/target/
+      dest: /tmp/fetched/
+
+- name: deploy app
+  hosts: deploy
+  become: yes
+
+  tasks:
+  - name: ensure default-jdk package is peresent
+    apt:
+      name: default-jdk
+      state: present
+
+  - name: ensure tomcat package is present
+    apt:
+      name: tomcat9
+      state: present
+
+  - name: ensure .war file is present
+    copy:
+      src: /tmp/fetched/
+      dest: /var/lib/tomcat9/webapps/
+
