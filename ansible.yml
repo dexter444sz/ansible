@@ -46,6 +46,6 @@
 
   - name: ensure .war file is present
     copy:
-      src: /tmp/fetched/
+      src: /tmp/fetched/34.72.66.109/home/boxfuse-sample-java-war-hello/target/hello-1.0.war
       dest: /var/lib/tomcat9/webapps/
 
